@@ -199,6 +199,11 @@ def forecast_cards(forecast) -> None:
 
 
 def synthetic_banner(panel) -> None:
+    """Mark the session as demo data.
+
+    Kept deliberately small and out of the way: a sidebar footnote rather than
+    a banner on every page. It stays because the app prices real, named cards,
+    and these figures are generated, so a viewer has no other way to tell.
+    """
     if panel["is_synthetic"].any():
-        st.info("Demo data. These figures are made up and reflect no real "
-                "market. Load your own on the Import Data page.")
+        st.sidebar.caption("Demo data. Figures are generated, not real prices.")

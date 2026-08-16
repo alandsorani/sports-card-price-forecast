@@ -23,7 +23,7 @@ at time T, can we predict its price at T+30, T+90, T+180, and T+365 days?*
   simulation date's information set, using only labels that had matured by then.
 - **A Streamlit app** with card search, forecasts, price history, player
   analysis, comparable cards, a collection tracker, a market dashboard, and a
-  model performance page.
+  model performance page. It ships loaded with generated demo data.
 - **Three CLIs**: `train.py`, `backtest.py`, `predict.py`.
 
 ## Data sourcing and licensing
@@ -47,22 +47,18 @@ documented does not make the underlying data free to collect.
 
 ### Bring your own observations
 
-The pipeline is therefore driven by a CSV you supply. Two ways to load it:
+The pipeline is therefore driven by a CSV you supply:
 
-- **In the app**: the **Import Data** page takes a CSV upload, validates it
-  against the schema, reports how many rows are usable and why any were
-  rejected, and only writes to `data/raw/` after you confirm. It backs up the
-  previous file and offers replace-or-append. The same page has a blank
-  template to download and an optional uploader for player statistics.
-- **By hand**: `data/raw/sports_card_prices.template.csv` — copy to
+- `data/raw/sports_card_prices.template.csv` — copy to
   `data/raw/sports_card_prices.csv` and add observations you may legally
   record: your own purchase/sale records, sale results you note down manually
-  from public listings, or data you have licensed.
+  from public listings, or data you have licensed. `src.data.load` validates
+  the file and reports any rows it rejects.
 - `python -m src.data.synthetic` generates **clearly-labeled synthetic demo
   data** (`source=SYNTHETIC` on every row) so the pipeline, tests, and app can
-  be exercised. Synthetic numbers are random walks; every surface of the app
-  shows a warning banner when they are loaded, and no output based on them
-  describes any real market.
+  be exercised. Synthetic numbers are random walks, the app marks the session
+  as demo data whenever they are loaded, and no output based on them describes
+  any real market.
 
 ### Player statistics
 
@@ -107,9 +103,8 @@ python -m src.data.synthetic
 
 This writes ~6,700 rows across 20 cards to `data/raw/sports_card_prices.csv`,
 every row labeled `source=SYNTHETIC`. It is random-walk data for exercising the
-pipeline, and the app says so on every page. Replace it with real observations
-whenever you have them, either through the app's **Import Data** page or by
-editing that CSV directly.
+pipeline, not real prices. Replace that file with real observations whenever
+you have them.
 
 ### 3. Train the models
 

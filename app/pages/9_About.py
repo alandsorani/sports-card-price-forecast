@@ -17,12 +17,14 @@ st.subheader("The data")
 st.markdown(
     """
 Forecasts run on the price observations in `data/raw/sports_card_prices.csv`.
-Load your own through the **Import Data** page, or edit the file directly. Each
-row records one observation of one card on one date, along with a `source` and
-`source_url` so the provenance travels with the price.
+Each row records one observation of one card on one date, along with a `source`
+and `source_url` so the provenance travels with the price.
 
-Any row marked `source=SYNTHETIC` is placeholder data for trying out the app,
-and every page flags it when present.
+**The figures shown in this app are generated demo data, not real market
+prices.** They exist to demonstrate the forecasting pipeline end to end. Rows
+carry `source=SYNTHETIC` to mark them, and `python -m src.data.synthetic`
+regenerates them. Replacing that file with real observations is what turns the
+output into something meaningful.
 
 Player statistics are optional and live in
 `data/raw/player_season_stats.csv`. One free source is the Kaggle

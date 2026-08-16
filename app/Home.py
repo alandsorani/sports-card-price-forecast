@@ -47,13 +47,14 @@ the numbers.
     )
 
 with right:
-    st.subheader("Using your own data")
+    st.subheader("How it works")
     st.markdown(
         """
-Add your observations to `data/raw/sports_card_prices.csv`, then run
-`python train.py` followed by `python backtest.py`.
+Models train on the past and are scored on the future, never on a random
+shuffle of the two. Simple rules compete against gradient boosting and
+random forests, and whichever wins on unseen data is the one that runs.
 
-Everything in this app rebuilds from that one file.
+Every forecast comes with a range, not just a number.
 """
     )
 
