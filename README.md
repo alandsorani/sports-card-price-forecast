@@ -76,36 +76,82 @@ The pipeline is therefore driven by a CSV you supply. Two ways to load it:
 
 ---
 
-## Install
+## Running it locally
+
+Everything runs on your own machine. There are no API keys, no accounts, and
+no network calls at runtime.
+
+**Prerequisites:** Python 3.12 (what this is developed and tested against;
+3.10+ should work) and git. Check with `python3 --version`.
+
+### 1. Clone and install
 
 ```bash
+git clone https://github.com/alandsorani/sports-card-price-forecast.git
+cd sports-card-price-forecast
 python3.12 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Run
+On Windows, activate with `.venv\Scripts\activate` instead. Installation pulls
+down pandas, scikit-learn, plotly, and streamlit, and takes a minute or two.
+
+### 2. Get some data in
+
+The repo ships no price data, so start with the generated demo set:
 
 ```bash
-# 1. Demo data (labeled SYNTHETIC) or your own CSV in data/raw/
 python -m src.data.synthetic
+```
 
-# 2. Train: walk-forward validation, model selection, conformal intervals
+This writes ~6,700 rows across 20 cards to `data/raw/sports_card_prices.csv`,
+every row labeled `source=SYNTHETIC`. It is random-walk data for exercising the
+pipeline, and the app says so on every page. Replace it with real observations
+whenever you have them, either through the app's **Import Data** page or by
+editing that CSV directly.
+
+### 3. Train the models
+
+```bash
 python train.py
+```
 
-# 3. True historical backtest
+Walk-forward validation across four horizons and several model families, so
+expect around five minutes. It prints which model won at each horizon and
+saves them to `models/`. Until this finishes, the app runs but has no forecasts
+to show.
+
+### 4. Start the app
+
+```bash
+streamlit run app/Home.py
+```
+
+Your browser opens at `http://localhost:8501`. Stop the server with `Ctrl+C`.
+
+### Optional
+
+```bash
+# Replay history and grade the forecasts against what actually happened
 python backtest.py
 
-# 4. Forecast one card
+# Forecast a single card from the terminal
 python predict.py --player "LeBron James" --year 2003 --set "Topps Chrome" \
     --card-number 111 --grade 10 --grading-company PSA
 
-# 5. App
-streamlit run app/Home.py
-
-# 6. Tests
+# Run the test suite
 pytest
 ```
+
+### If something goes wrong
+
+- **`FileNotFoundError` about `sports_card_prices.csv`** — step 2 has not run.
+- **"Models not trained yet" in the app** — step 3 has not run, or did not finish.
+- **Port already in use** — `streamlit run app/Home.py --server.port 8502`.
+- **Edited something under `src/` and the app did not pick it up** — restart the
+  server. Streamlit re-runs the page script but keeps already-imported modules
+  in memory.
 
 ## Pipeline
 
