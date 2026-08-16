@@ -26,52 +26,6 @@ at time T, can we predict its price at T+30, T+90, T+180, and T+365 days?*
   model performance page. It ships loaded with generated demo data.
 - **Three CLIs**: `train.py`, `backtest.py`, `predict.py`.
 
-## Data sourcing and licensing
-
-This project deliberately ships no scraped price data. The major sports-card
-price sources were reviewed for whether their data can be collected and reused
-legally and for free, and each was ruled out:
-
-| Source | Historical prices? | Free? | Automated collection permitted? | Verdict |
-|---|---|---|---|---|
-| SportsCardsPro / PriceCharting | Yes (charts) | View only | **No** — ToS: "All Price Data on the site is sole property of SportsCardsPro"; reuse requires a paid Legendary subscription; API/CSV are paid; site returns 403 to non-browser clients | Not used |
-| PSA Auction Prices Realized | Yes | View only | **No** — user agreement prohibits robots/scrapers; site blocks automated fetching | Not used |
-| eBay Marketplace Insights API | Yes (90 days) | Yes | Approval-gated limited release; 90-day window too short for 365-day targets | Not used |
-| Card Ladder / VCP / PWCC (Fanatics Collect) | Yes | Paid / account-gated | No | Not used |
-| Kaggle | — | — | — | No dataset with physical sports-card price history exists (searched 2026-08-15) |
-| Hugging Face | TCG games only (`TCGapi/tcg-price-history`); sports images w/o history (`GotThatData/sports-cards`) | Yes | n/a | Not sports cards / no history |
-| Academic repos (openICPSR, Dataverse, Zenodo) | — | — | — | Nothing usable found |
-
-Third-party scraper tools do not change this. A scraper being publicly
-documented does not make the underlying data free to collect.
-
-### Bring your own observations
-
-The pipeline is therefore driven by a CSV you supply:
-
-- `data/raw/sports_card_prices.template.csv` — copy to
-  `data/raw/sports_card_prices.csv` and add observations you may legally
-  record: your own purchase/sale records, sale results you note down manually
-  from public listings, or data you have licensed. `src.data.load` validates
-  the file and reports any rows it rejects.
-- `python -m src.data.synthetic` generates **clearly-labeled synthetic demo
-  data** (`source=SYNTHETIC` on every row) so the pipeline, tests, and app can
-  be exercised. Synthetic numbers are random walks, the app marks the session
-  as demo data whenever they are loaded, and no output based on them describes
-  any real market.
-
-### Player statistics
-
-- **Kaggle NBA Database** — `wyattowalsh/basketball`,
-  https://www.kaggle.com/datasets/wyattowalsh/basketball
-- License: **CC BY-SA 4.0**. Coverage: 1946-47 → present (box scores, season
-  aggregates, awards, draft). Built from public NBA API responses.
-- Obtain: manual download with a Kaggle account (no automated collection in
-  this project). Export season rows into `data/raw/player_season_stats.csv`
-  (template provided). Join key: player name + season end date.
-
----
-
 ## Running it locally
 
 Everything runs on your own machine. There are no API keys, no accounts, and
@@ -310,8 +264,6 @@ widgets: `src/visualization/theme.py` holds the tokens and the Plotly template,
 ## Future improvements
 
 - Game-level player stats for in-season to-date features.
-- Licensed data connector for owners of a PriceCharting/SportsCardsPro
-  subscription (their Legendary tier permits internal business use).
 - Cross-card correlation model for honest portfolio intervals.
 - Quantile-regression intervals as an alternative to split conformal.
 
@@ -321,5 +273,4 @@ Released under the [MIT License](LICENSE).
 
 The license covers this source code. It does not extend to any price data you
 load into it: whatever you place in `data/raw/` stays governed by the terms of
-wherever you obtained it. The Kaggle NBA Database referenced for player
-statistics is separately licensed CC BY-SA 4.0.
+wherever you obtained it.
